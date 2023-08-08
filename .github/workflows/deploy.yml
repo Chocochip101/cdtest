@@ -63,21 +63,22 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Docker Prod Build
-        if: ${{ github.ref }} == "refs/heads/main"
-        run: docker build --build-arg 'PROFILE=prod' -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_PROD_REPOSITORY }}:${{ secrets.DOCKER_TAG }} .
+      - name: Docker Build
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            docker build --build-arg 'PROFILE=prod' -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_PROD_REPOSITORY }}:${{ secrets.DOCKER_TAG }} .
+          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+            docker build --build-arg 'PROFILE=dev' -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_DEV_REPOSITORY }}:${{ secrets.DOCKER_TAG }} .
+          fi
 
-      - name: Docker Dev Build
-        if: ${{ github.ref }} == "refs/heads/dev"
-        run: docker build --build-arg 'PROFILE=dev' -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_DEV_REPOSITORY }}:${{ secrets.DOCKER_TAG }} .
+      - name: Docker Push
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_PROD_REPOSITORY }}:${{ secrets.DOCKER_TAG }}
+          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+            docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_DEV_REPOSITORY }}:${{ secrets.DOCKER_TAG }}
+          fi
 
-      - name: DockerHub Prod Push
-        if: ${{ github.ref }} == "refs/heads/main"
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_PROD_REPOSITORY }}:${{ secrets.DOCKER_TAG }}
-
-      - name: DockerHub Dev Push
-        if: ${{ github.ref }} == "refs/heads/dev"
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_DEV_REPOSITORY }}:${{ secrets.DOCKER_TAG }}
 
 #      - name: Application Dev Run
 #        uses: appleboy/ssh-action@v0.1.6
