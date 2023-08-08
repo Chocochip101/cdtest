@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 도커허브 이미지 pull
-sudo docker pull softeerteam1/mycardeepdive_dev
+sudo docker pull softeerteam1/mycardeepdive_dev:latest
 
 # 도커 run
 sudo docker run -d -p 8081:8081 --name my-car-deep-dive softeerteam1/mycardeepdive_dev:latest
