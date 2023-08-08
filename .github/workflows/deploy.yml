@@ -64,10 +64,10 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Docker Build
-        run: docker build --build-arg 'PROFILE=prod' -t mycardeepdive .
+        run: docker build --build-arg 'PROFILE=prod' -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_DEV_REPOSITORY }}:${{ secrets.DOCKER_TAG }} .
 #
       - name: DockerHub Push
-        run: docker push ${{ secrets.DOCKERHUB_DEV_REPOSITORY }}:${{ secrets.PROJECT_NAME }}
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_DEV_REPOSITORY }}:${{ secrets.DOCKER_TAG }}
 
 
 #      - name: Application Run
