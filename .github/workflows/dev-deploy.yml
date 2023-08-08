@@ -60,24 +60,15 @@ jobs:
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_DEV_REPOSITORY }}:${{ secrets.DOCKER_TAG }}
 
       - name: Make zip file
-        run: zip -r ./$GITHUB_SHA.zip .
+        run: zip -r scripts.zip dev-scripts/
         shell: bash
 
       - name: Upload to S3
-        run: aws s3 cp --region ${{ secrets.AWS_REGION }} ./$GITHUB_SHA.zip s3://${{ secrets.S3_BUCKET_DEV_NAME }}/$GITHUB_SHA.zip
+        run: aws s3 cp --region ${{ secrets.AWS_REGION }} scripts.zip s3://${{ secrets.S3_BUCKET_DEV_NAME }}/script/
 
-#      - name: Code Deploy
-#        run: aws deploy create-deployment --application-name ${{ secrets.CODEDEPLOY_DEV_NAME }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ secrets.CODEDEPLOY_DEV_GROUP }} --appspec-file scripts/appspec_dev.yml --s3-location bucket=${{ secrets.S3_BUCKET_DEV_NAME }},bundleType=zip,key=$GITHUB_SHA.zip
+      - name: Code Deploy
+        run: aws deploy create-deployment --application-name ${{ secrets.CODEDEPLOY_DEV_NAME }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ secrets.CODEDEPLOY_DEV_GROUP }} --s3-location bucket=${{ secrets.S3_BUCKET_DEV_NAME }},bundleType=zip,key=script/scripts.zip
 
-      - name: Deploy to CodeDeploy
-        uses: aws-actions/aws-codedeploy-appspec-action@v1
-        with:
-          aws-region: ${{ secrets.AWS_REGION }} # AWS 리전을 설정합니다.
-          application-name: ${{ secrets.CODEDEPLOY_DEV_NAME }}
-          deployment-group-name: YourDeploymentGroupName
-          appspec-file: scripts/appspec_dev.yml
-          s3-bucket: ${{ secrets.S3_BUCKET_DEV_NAME }}
-          s3-key: $GITHUB_SHA.zip
 #      - name: action-slack
 #        uses: 8398a7/action-slack@v3
 #        with:
