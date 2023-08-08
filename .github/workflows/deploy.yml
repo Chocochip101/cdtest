@@ -64,20 +64,19 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Docker Prod Build
-        if: "${{ github.ref }}" == "refs/heads/main"
+        if: ${{ github.ref }} == "refs/heads/main"
         run: docker build --build-arg 'PROFILE=prod' -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_PROD_REPOSITORY }}:${{ secrets.DOCKER_TAG }} .
 
-
       - name: Docker Dev Build
-        if: "${{ github.ref }}" == "refs/heads/dev"
+        if: ${{ github.ref }} == "refs/heads/dev"
         run: docker build --build-arg 'PROFILE=dev' -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_DEV_REPOSITORY }}:${{ secrets.DOCKER_TAG }} .
 
       - name: DockerHub Prod Push
-        if: "${{ github.ref }}" == "refs/heads/main"
+        if: ${{ github.ref }} == "refs/heads/main"
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_PROD_REPOSITORY }}:${{ secrets.DOCKER_TAG }}
 
       - name: DockerHub Dev Push
-        if: "${{ github.ref }}" == "refs/heads/dev"
+        if: ${{ github.ref }} == "refs/heads/dev"
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_DEV_REPOSITORY }}:${{ secrets.DOCKER_TAG }}
 
 #      - name: Application Dev Run
