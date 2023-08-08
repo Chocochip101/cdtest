@@ -63,13 +63,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-#      - name: Docker Build
-#        run: docker build --build-arg 'PROFILE=prod' -t mycardeepdive .
+      - name: Docker Build
+        run: docker build --build-arg 'PROFILE=prod' -t mycardeepdive .
 #
-#      - name: DockerHub Push
-#        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
-#  docker push chocochip101/mycardeepdive-develop:tagname
-#
+      - name: DockerHub Push
+        run: docker push ${{ secrets.DOCKERHUB_DEV_REPOSITORY }}:${{ secrets.PROJECT_NAME }}
+
+
 #      - name: Application Run
 #        uses: appleboy/ssh-action@v0.1.6
 #        with:
