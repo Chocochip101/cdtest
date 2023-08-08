@@ -2,13 +2,13 @@ version: 0.0
 os: linux
 hooks:
   BeforeInstall:
-    - location: scripts/create-directory.sh
+    - location: create-directory.sh
       timeout: 300
       runas: root
-    - location: scripts/remove-container-dev.sh
+    - location: remove-container-dev.sh
       timeout: 300
       runas: root
   AfterInstall:
-    - location: scripts/pull-and-run-container-dev.sh
+    - location: pull-and-run-container-dev.sh
       timeout: 300
       runas: root
