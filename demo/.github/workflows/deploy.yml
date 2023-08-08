@@ -1,0 +1,99 @@
+# This is a basic workflow to help you get started with Actions
+name: MyCarDeepDive CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout release
+        uses: actions/checkout@v3
+
+      - name: Setup JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: Configure AWS
+        id: aws-credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+        shell: bash
+
+      - name: Gradle Build
+        run: ./gradlew build -x test
+        shell: bash
+        
+#      - name: Jacoco Report
+#        if: ${{ failure() }}
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: jacoco-report # 결과물의 이름
+#          path: build/reports/jacoco/test/html
+#
+#      - name: Echo environment
+#        run: |
+#          if [[ "${{ github.ref }}" == "refs/heads/be-main" ]]; then
+#            echo "production"
+#          elif [[ "${{ github.ref }}" == "refs/heads/be-develop" ]]; then
+#            echo "develop"
+#          fi
+#
+#      - name: DockerHub Login
+#        uses: docker/login-action@v2
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+#
+#      - name: Docker Build
+#        run: docker build --build-arg 'PROFILE=prod' -t mycardeepdive .
+#
+#      - name: DockerHub Push
+#        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
+#  docker push chocochip101/mycardeepdive-develop:tagname
+#
+#      - name: Application Run
+#        uses: appleboy/ssh-action@v0.1.6
+#        with:
+#          host: ${{ secrets.EC2_HOST }}
+#          username: ${{ secrets.EC2_USERNAME }}
+#          key: ${{ secrets.EC2_KEY }}
+#
+#          script: |
+#            sudo docker kill ${{ secrets.PROJECT_NAME }}
+#            sudo docker rm -f ${{ secrets.PROJECT_NAME }}
+#            sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
+#            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
+#
+#            sudo docker run -p ${{ secrets.PORT }}:${{ secrets.PORT }} \
+#            --name ${{ secrets.PROJECT_NAME }} \
+#            -d ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
+
+      - name: action-slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          author_name: mycardeepdive-be
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+          if_mention: failure,cancelled
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
