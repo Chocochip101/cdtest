@@ -49,20 +49,20 @@ jobs:
 #          name: jacoco-report # 결과물의 이름
 #          path: build/reports/jacoco/test/html
 #
-#      - name: Echo environment
-#        run: |
-#          if [[ "${{ github.ref }}" == "refs/heads/be-main" ]]; then
-#            echo "production"
-#          elif [[ "${{ github.ref }}" == "refs/heads/be-develop" ]]; then
-#            echo "develop"
-#          fi
+      - name: Echo environment
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "production"
+          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+            echo "develop"
+          fi
 #
-#      - name: DockerHub Login
-#        uses: docker/login-action@v2
-#        with:
-#          username: ${{ secrets.DOCKERHUB_USERNAME }}
-#          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-#
+      - name: DockerHub Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
 #      - name: Docker Build
 #        run: docker build --build-arg 'PROFILE=prod' -t mycardeepdive .
 #
