@@ -13,4 +13,5 @@ jobs:
     steps:
       - uses: dessant/label-actions@v4
         with:
+          github-token: ${{ secrets.token }}
           process-only: 'discussions'
