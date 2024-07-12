@@ -11,7 +11,8 @@ jobs:
   action:
     runs-on: ubuntu-latest
     steps:
-      - uses: dessant/label-actions@v4
+      - name: Label Actions
+        uses: dessant/label-actions@v4
         with:
           github-token: ${{ secrets.token }}
           process-only: 'discussions'
