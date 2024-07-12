@@ -8,10 +8,16 @@ permissions:
   discussions: write
 
 jobs:
-  action:
+  labeler:
+  	# runner 설정
     runs-on: ubuntu-latest
+    # 리파지토리에 대한 권한 설정
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
-      - uses: dessant/label-actions@v4
+      - name: Check Labels
         id: labeler
+        uses: jimschubert/labeler-action@v1
         with:
           github-token: ${{ secrets.token }}
