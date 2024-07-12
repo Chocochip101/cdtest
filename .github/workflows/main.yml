@@ -19,4 +19,4 @@ jobs:
         id: labeler
         uses: jimschubert/labeler-action@v1
         with:
-          github-token: ${{ secrets.token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
