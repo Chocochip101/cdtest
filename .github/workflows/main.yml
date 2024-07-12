@@ -1,0 +1,18 @@
+name: 'Label Actions'
+
+on:
+  discussion:
+    types: [created, unlabeled]
+
+permissions:
+  discussions: write
+
+jobs:
+  action:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: dessant/label-actions@v4
+        with:
+          github-token: ${{ secrets.token }}
+          config-path: '.github/label-actions.yml'
+          process-only: ''
