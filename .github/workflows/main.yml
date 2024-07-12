@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: dessant/label-actions@v4
+        id: labeler
         with:
           github-token: ${{ secrets.token }}
-          config-path: '.github/label-actions.yml'
-          process-only: ''
