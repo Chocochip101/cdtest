@@ -8,11 +8,11 @@ permissions:
   discussions: write
 
 jobs:
-  action:
+  label:
+    name: Label Actions
     runs-on: ubuntu-latest
     steps:
       - name: Label Actions
         uses: dessant/label-actions@v4
         with:
           github-token: ${{ secrets.token }}
-          process-only: 'discussions'
