@@ -1,27 +1,18 @@
-name: Assign Label to Discussion
+name: 'Label Actions'
 
 on:
   discussion:
     types: [created]
 
+permissions:
+  discussions: write
+
 jobs:
-  assign-label:
+  action:
     runs-on: ubuntu-latest
     steps:
-    - name: Check out the repository
-      uses: actions/checkout@v2
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
-
-    - name: Install dependencies
-      run: npm install axios
-
-    - name: Assign label
-      run: node assign-label.js
-      env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN }}
-        REPOSITORY: ${{ github.repository }}
-        DISCUSSION_NUMBER: ${{ github.event.discussion.number }}
+      - uses: dessant/label-actions@v4
+        with:
+          github-token: ${{ github.token }}
+          config-path: '.github/label-actions.yml'
+          process-only: 'discussions'
