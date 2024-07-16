@@ -1,21 +1,21 @@
 name: 'Label Actions'
 
 on:
+  issues:
+    types: [created]
+  pull_request_target:
+    types: [created]
   discussion:
     types: [created]
 
 permissions:
+  contents: read
+  issues: write
+  pull-requests: write
   discussions: write
 
 jobs:
-  label_issues:
+  action:
     runs-on: ubuntu-latest
-    permissions:
-      issues: write
     steps:
-      - run: gh issue edit "$NUMBER" --add-label "$LABELS"
-        env:
-          GH_TOKEN: ${{ secrets.TOKEN }}
-          GH_REPO: ${{ github.repository }}
-          NUMBER: ${{ github.event.issue.number }}
-          LABELS: solved
+      - uses: dessant/label-actions@v4
