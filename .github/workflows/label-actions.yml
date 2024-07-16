@@ -8,20 +8,14 @@ permissions:
   discussions: write
 
 jobs:
-  action:
+  label_issues:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
     steps:
-      - name: Check out repository contents
-        uses: actions/checkout@v2
-      
-      - name: Print working directory
-        run: pwd
-
-      - name: List directory contents
-        run: ls -al
-        
-      - uses: dessant/label-actions@v4
-        with:
-          github-token: ${{ github.token }}
-          config-path: '.github/label-actions.yml'
-          process-only: 'discussions'
+      - run: gh discussion edit "$NUMBER" --add-label "$LABELS"
+        env:
+          GH_TOKEN: ${{ secrets.TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.discussion.number }}
+          LABELS: solved
