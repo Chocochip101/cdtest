@@ -13,9 +13,9 @@ jobs:
     permissions:
       issues: write
     steps:
-      - run: gh discussion edit "$NUMBER" --add-label "$LABELS"
+      - run: gh issue edit "$NUMBER" --add-label "$LABELS"
         env:
           GH_TOKEN: ${{ secrets.TOKEN }}
           GH_REPO: ${{ github.repository }}
-          NUMBER: ${{ github.event.discussion.number }}
+          NUMBER: ${{ github.event.issue.number }}
           LABELS: solved
