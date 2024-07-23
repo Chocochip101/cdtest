@@ -1,21 +1,52 @@
-name: 'Label Actions'
+name: Create and Label Discussion
 
 on:
-  issues:
-    types: [created]
-  pull_request_target:
-    types: [created]
-  discussion:
-    types: [created]
-
-permissions:
-  contents: read
-  issues: write
-  pull-requests: write
-  discussions: write
+  workflow_dispatch:
 
 jobs:
-  action:
+  create_discussion:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: dessant/label-actions@v4
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Create a discussion
+      id: create_discussion
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # Define variables
+        REPO=${{ github.repository }}
+        TITLE="New Discussion Title"
+        BODY="This is the body of the discussion."
+        CATEGORY_ID=${{ secrets.DISCUSSION_CATEGORY_ID }}
+
+        # Create discussion
+        RESPONSE=$(curl -s -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token $GITHUB_TOKEN" \
+          https://api.github.com/repos/$REPO/discussions \
+          -d "{\"title\":\"$TITLE\",\"body\":\"$BODY\",\"category_id\":$CATEGORY_ID}")
+
+        # Extract discussion number from response
+        DISCUSSION_NUMBER=$(echo $RESPONSE | jq '.number')
+
+        # Export discussion number as an output
+        echo "::set-output name=discussion_number::$DISCUSSION_NUMBER"
+
+    - name: Add label to discussion
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # Define variables
+        REPO=${{ github.repository }}
+        DISCUSSION_NUMBER=${{ steps.create_discussion.outputs.discussion_number }}
+        LABELS='["Label1", "Label2"]'
+
+        # Add labels to discussion
+        curl -s -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token $GITHUB_TOKEN" \
+          https://api.github.com/repos/$REPO/discussions/$DISCUSSION_NUMBER/labels \
+          -d "{\"labels\": $LABELS}"
