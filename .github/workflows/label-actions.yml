@@ -11,7 +11,7 @@ jobs:
     steps:
     - name: Label the discussion
       env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        GH_TOKEN: ${{ secrets.TOKEN }}
       run: |
         DISCUSSION_ID=$(jq -r .discussion.node_id "$GITHUB_EVENT_PATH")
         curl -X POST \
